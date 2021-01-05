@@ -1,4 +1,4 @@
-# College Student Voting Analysis
+# Voting Matters : College Student Voting Analysis
 This project is a part of the [This is Statistics Fall Data Challenge](https://thisisstatistics.org/falldatachallenge/).
 
 #### -- Project Status: [Completed]
