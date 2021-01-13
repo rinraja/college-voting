@@ -120,7 +120,6 @@ It is worth noting that there were fewer people in this study that were between 
 ```{r}
 #Preliminary Analysis of METRO
 summary(data$METROSIMPLE)
-boxplot(data$METROSIMPLE)
 table(data$METROSIMPLE)
 ```
 Metro Data Analysis:
@@ -145,6 +144,7 @@ hist(data$VETSTAT)
 table(data$VETSTAT)
 ```
 Veterans Data Analysis:
+
 The majority of people in this data set did not serve veterans and only 0.102434 people served.  
 
 ```{r}
@@ -166,7 +166,7 @@ data %>% select(VOTEDSIMPLE,AGE,RACE,METROSIMPLE,SEXSIMPLE) %>%
 data %>% 
   select(VOTEDSIMPLE,AGE,RACESIMPLE,METROSIMPLE,SEXSIMPLE) %>% 
   ggplot()+
-  #, fill = SEXSIMPLE
+  
   geom_bar(aes(x=VOTEDSIMPLE)) +
   facet_grid(~RACESIMPLE)+
 
@@ -209,7 +209,7 @@ Interpretation of Logistic Regression Model:
 Assumptions: Each variable does not effect the other ones. This means that race will not have an effect on metro, sex, or age. 
 
 Model equation:
-  log_odds =  -2.164897 + (0.077789*AGE) + (0.213431*METROSIMPLECentralCity) + (0.215372*METROSIMPLEOutsideCentralCity) + (0.165660*RACESIMPLEBlack) + (-0.542498*RACESIMPLEAmericanIndian) + (-0.354319*RACESIMPLEAsian) + (-0.168815*RACESIMPLEOther)+ (0.0932384*SEXSIMPLEFemale)
+  log_odds =  -2.164897 + (0.077789*AGE) + (0.213431*METROSIMPLECentralCity) + (0.215372*METROSIMPLEOutsideCentralCity) + (0.165660*RACESIMPLEBlack) + (-0.542498*RACESIMPLEAmericanIndian) + (-0.354319*RACESIMPLEAsian) + (-0.168815*RACESIMPLEOther)+ (0.219261*SEXSIMPLEFemale)
 
 Hypothesis Test:
 
@@ -229,143 +229,58 @@ summary(data$SEXSIMPLE)
 
 Scenario Calculations:
 ```{r}
-#Calculate the odds ratios for people with different scenarios
-#By looking at the mean values for each variable, we can create sample scenarios and compare the likelihood of two people voting
-#Since RACE has the highest impact on the outcome, that will be the changing variable in this example
+# Calculate the odds ratios for people with different scenarios
+# By looking at the mean values for each variable, we can create sample scenarios and compare the likelihood of two people voting
 
-#-0.5678881 + (0.0260186*AGE) + (0.0909261*METROSIMPLE) + (-0.1168276*RACESIMPLE) + (0.0932384*SEXSIMPLE)
+# -2.164897 + (0.077789*AGE) + (0.213431*METROSIMPLECentralCity) + (0.215372*METROSIMPLEOutsideCentralCity) + (0.165660*RACESIMPLEBlack) + (-0.542498*RACESIMPLEAmericanIndian) + (-0.354319*RACESIMPLEAsian) + (-0.168815*RACESIMPLEOther)+ (0.219261*SEXSIMPLEFemale)
 
-b0 = -0.5678881 
-b1 = 0.0260186
-b2 = 0.0909261
-b3 = -0.1168276
-b4 = 0.0932384 
-
-# odds for 18 year old, White, Central City, Female
-age <- 18 
-metro <- 1
-race <- 1
-sex <- 1 
-
-log_odds_1 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_1 <- exp(log_odds_1)
-odds_1
+b0 = -2.164897 
+b_age = 0.077789
+b_centCity = 0.213431
+b_outCenCity = 0.215372
+b_black= 0.165660
+b_amer = -0.542498
+b_asian = -0.354319
+b_other = -0.168815
+b_female = 0.219261
 
 # odds for 18 year old, Black, Central City, Female
-age <- 18 
-metro <- 1
-race <- 2
-sex <- 1 
-
-log_odds_2 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_2 <- exp(log_odds_2)
-odds_2
-
-odds_ratio <- odds_1/odds_2
-odds_ratio
-```
-
-```{r}
-#Finding Odds Ratio for AGE
-
-#-0.5678881 + (0.0260186*AGE) + (0.0909261*METROSIMPLE) + (-0.1168276*RACESIMPLE) + (0.0932384*SEXSIMPLE)
-
-b0 = -0.5678881 
-b1 = 0.0260186
-b2 = 0.0909261
-b3 = -0.1168276
-b4 = 0.0932384 
-
-# odds for 19 year old, White, Central City, Female
-age <- 19 
-metro <- 1
-race <- 1
-sex <- 1 
-
-log_odds_1 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_1 <- exp(log_odds_1)
+odds_1 = exp(b0 + b_age*18 + b_centCity*1 + b_black*1
++ b_female*1)
 odds_1
 
-# odds for 18 year old, White, Central City, Female
-age <- 18 
-metro <- 1
-race <- 1
-sex <- 1 
-
-log_odds_2 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_2 <- exp(log_odds_2)
+# odds for 22 year old, White, Outside Central City, Male
+odds_2 = exp(b0 + b_age*22 + b_outCenCity*1)
 odds_2
 
-odds_ratio <- odds_1/odds_2
-odds_ratio
+odds_ratio1 = odds_1/odds_2
+odds_ratio1
 ```
+An 18 year old, black, central city, female will have an odds of 0.84676 of voting in an election versus a 0.78807 odds of voting for a 22 year old, white, outside central city, male. Therefore, an 18 year old with the characteristics mentioned has 107.44% the odds of a 22 year old.  
+```{r}
+# odds for 19 year old, Asian, Non-metro area, Female
+odds_3 <- exp(b0 + b_age*19 + b_asian*1 + b_female*1)
+odds_3
+
+# odds for 20 year old, Black, Central City, Male
+odds_4 <- exp(b0 + b_age*20 + b_black*1 + b_centCity*1)
+odds_4
+
+odds_ratio2 <- odds_3/odds_4
+odds_ratio2
+```
+An 19 year old, asian, non-metro, female will have an odds of 0.43957 of voting in an election versus a 0.79451 odds of voting for a 20 year old, black, central City, male. Therefore, an 18 year old with the characteristics mentioned has a 55.33% the odds of a 20 year old.
 
 ```{r}
-#Finding Odds Ratio for METROSIMPLE
+# odds for 22 year old, Native American, Non-metro Area, Male
+odds_5 <- exp(b0 + b_age*22 + b_amer*1)
+odds_5
 
-#-0.5678881 + (0.0260186*AGE) + (0.0909261*METROSIMPLE) + (-0.1168276*RACESIMPLE) + (0.0932384*SEXSIMPLE)
+# odds for 20 year old, White, Non-metro Area, Male
+odds_6 <- exp(b0 + b_age*20)
+odds_6
 
-b0 = -0.5678881 
-b1 = 0.0260186
-b2 = 0.0909261
-b3 = -0.1168276
-b4 = 0.0932384 
-
-# odds for 18 year old, White, Central City, Female
-age <- 18 
-metro <- 1
-race <- 1
-sex <- 1 
-
-log_odds_1 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_1 <- exp(log_odds_1)
-odds_1
-
-# odds for 18 year old, White, Outside Central City, Female
-age <- 18 
-metro <- 2
-race <- 1
-sex <- 1 
-
-log_odds_2 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_2 <- exp(log_odds_2)
-odds_2
-
-odds_ratio <- odds_1/odds_2
-odds_ratio
+odds_ratio3 <- odds_5/odds_6
+odds_ratio3
 ```
-
-```{r}
-#Finding Odds Ratio for SEX
-
-#-0.5678881 + (0.0260186*AGE) + (0.0909261*METROSIMPLE) + (-0.1168276*RACESIMPLE) + (0.0932384*SEXSIMPLE)
-
-b0 = -0.5678881 
-b1 = 0.0260186
-b2 = 0.0909261
-b3 = -0.1168276
-b4 = 0.0932384 
-
-# odds for 18 year old, White, Central City, Female
-age <- 18 
-metro <- 1
-race <- 1
-sex <- 1 
-
-log_odds_1 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_1 <- exp(log_odds_1)
-odds_1
-
-# odds for 18 year old, White, Central City, Male
-age <- 18 
-metro <- 1
-race <- 1
-sex <- 0 
-
-log_odds_2 <- b0 + b1*age + b2*metro + b3*race + b4*sex
-odds_2 <- exp(log_odds_2)
-odds_2
-
-odds_ratio <- odds_1/odds_2
-odds_ratio
-```
+It is very interesting because a student who is Native American and is a senior has a 0.3693 odds of voting versus a White 20 year old student with a chance of 0.5438. This shows that race is a major contributor to voter turnout because even though the Native American student is older than the white student, their likelihood of voting is still smaller. 
